@@ -1,0 +1,1317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CampusConnect</title>
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --p: #FF6B35; --ps: #E85A28; --s: #F7931E;
+      --acc: #4ECDC4; --acc2: #45B8B0;
+      --bg: #0B0B18; --surf: #14142A; --surf2: #1E1E35; --card: #191930;
+      --bdr: rgba(255,255,255,0.07); --bdr2: rgba(255,255,255,0.12);
+      --tx: #F0EFF8; --txm: #9898B8; --txd: #5A5A78;
+      --ok: #4ECDC4; --err: #FF5F5F;
+      --sh: 0 4px 24px rgba(0,0,0,.45); --sh2: 0 12px 48px rgba(0,0,0,.6);
+      --r: 12px; --r2: 18px; --r3: 24px;
+      --font: 'Outfit', sans-serif; --mono: 'Space Mono', monospace;
+      --sw: 230px; --tb: 56px;
+      --ease: cubic-bezier(0.4,0,0.2,1);
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: var(--font); background: var(--bg); color: var(--tx); font-size: 15px; overflow-x: hidden; line-height: 1.5; }
+    body::before {
+      content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
+      background: radial-gradient(ellipse 60% 50% at 10% 20%, rgba(255,107,53,.06) 0%, transparent 60%),
+                  radial-gradient(ellipse 50% 40% at 90% 80%, rgba(78,205,196,.06) 0%, transparent 60%),
+                  radial-gradient(ellipse 40% 30% at 50% 50%, rgba(247,147,30,.03) 0%, transparent 60%);
+    }
+    #root { position:relative; z-index:1; min-height:100vh; }
+    a { color:inherit; text-decoration:none; }
+    button { cursor:pointer; font-family:var(--font); border:none; background:none; color:inherit; }
+    input, select, textarea { font-family:var(--font); }
+    select option { background:var(--surf2); color:var(--tx); }
+    ::-webkit-scrollbar { width:5px; }
+    ::-webkit-scrollbar-track { background:var(--surf); }
+    ::-webkit-scrollbar-thumb { background:var(--surf2); border-radius:99px; }
+    ::-webkit-scrollbar-thumb:hover { background:#333350; }
+
+    /* ── INPUTS ── */
+    .inp {
+      width:100%; padding:11px 14px; background:var(--surf2);
+      border:1.5px solid var(--bdr); border-radius:var(--r);
+      color:var(--tx); font-size:14px; outline:none;
+      transition:border-color .2s var(--ease), box-shadow .2s var(--ease);
+    }
+    .inp:focus { border-color:var(--p); box-shadow:0 0 0 3px rgba(255,107,53,.1); }
+    .inp::placeholder { color:var(--txd); }
+
+    /* ── BUTTONS ── */
+    .btn { padding:10px 20px; border-radius:var(--r); font-size:14px; font-weight:700;
+      transition:all .2s var(--ease); display:inline-flex; align-items:center; gap:7px; }
+    .btn-p { background:linear-gradient(135deg,var(--p),var(--s)); color:#fff; box-shadow:0 4px 16px rgba(255,107,53,.22); }
+    .btn-p:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(255,107,53,.33); }
+    .btn-p:active { transform:translateY(0); }
+    .btn-g { background:var(--surf2); color:var(--txm); border:1.5px solid var(--bdr2); }
+    .btn-g:hover { border-color:var(--p); color:var(--tx); background:rgba(255,107,53,.06); }
+    .btn-d { background:rgba(255,95,95,.12); color:var(--err); border:1.5px solid rgba(255,95,95,.28); }
+    .btn-d:hover { background:rgba(255,95,95,.22); }
+    .btn-acc { background:linear-gradient(135deg,var(--acc),var(--acc2)); color:#0B0B18; font-weight:800; box-shadow:0 4px 16px rgba(78,205,196,.2); }
+    .btn-acc:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(78,205,196,.3); }
+    .btn-sm { padding:6px 14px; font-size:12px; }
+    .btn-xs { padding:4px 10px; font-size:11px; }
+    .btn-full { width:100%; justify-content:center; }
+
+    /* ── TAGS ── */
+    .tag { display:inline-flex; align-items:center; padding:3px 10px; border-radius:99px;
+      font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.04em; }
+    .tag-tech     { background:rgba(255,107,53,.1);  color:var(--p);   border:1px solid rgba(255,107,53,.28); }
+    .tag-cultural { background:rgba(78,205,196,.1);  color:var(--acc); border:1px solid rgba(78,205,196,.28); }
+    .tag-sports   { background:rgba(247,147,30,.1);  color:var(--s);   border:1px solid rgba(247,147,30,.28); }
+    .tag-workshop { background:rgba(160,90,240,.1);  color:#b06af0;    border:1px solid rgba(160,90,240,.28); }
+    .tag-hackathon{ background:rgba(255,107,53,.1);  color:var(--p);   border:1px solid rgba(255,107,53,.28); }
+    .tag-technical{ background:rgba(78,205,196,.1);  color:var(--acc); border:1px solid rgba(78,205,196,.28); }
+    .tag-competition{background:rgba(247,147,30,.1); color:var(--s);   border:1px solid rgba(247,147,30,.28); }
+    .tag-default  { background:rgba(255,255,255,.06); color:var(--txm); border:1px solid var(--bdr); }
+
+    /* ── CARDS ── */
+    .card {
+      background:var(--card); border:1.5px solid var(--bdr); border-radius:var(--r2);
+      padding:20px; display:flex; flex-direction:column; gap:12px;
+      transition:transform .22s var(--ease), box-shadow .22s var(--ease), border-color .22s var(--ease);
+    }
+    .card:hover { transform:translateY(-4px); box-shadow:var(--sh); border-color:rgba(255,107,53,.2); }
+    .card-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(280px,1fr)); gap:16px; }
+
+    /* ── HELPERS ── */
+    .lbl { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--txd); margin-bottom:7px; }
+    .txt-m { color:var(--txm); font-size:13px; }
+    .txt-d { color:var(--txd); font-size:12px; }
+    .divider { border:none; border-top:1px solid var(--bdr); }
+    .chip { background:var(--surf2); border:1px solid var(--bdr); border-radius:99px;
+      font-size:11px; padding:3px 10px; color:var(--txm); font-family:var(--mono); }
+
+    @keyframes fadeUp { from { opacity:0; transform:translateY(18px); } to { opacity:1; transform:none; } }
+    @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+    @keyframes float  { 0%,100% { transform:translateY(0); } 50% { transform:translateY(-10px); } }
+    @keyframes pulse  { 0%,100% { opacity:1; } 50% { opacity:.6; } }
+    @keyframes spin   { from { transform:rotate(0deg); } to { transform:rotate(360deg); } }
+
+    /* ═══════════════════════════════════════════
+       LANDING PAGE
+    ═══════════════════════════════════════════ */
+    .landing { min-height:100vh; display:flex; flex-direction:column; }
+
+    /* NAV */
+    .land-nav {
+      display:flex; align-items:center; justify-content:space-between;
+      padding:18px 60px; border-bottom:1px solid var(--bdr);
+      background:rgba(11,11,24,.8); backdrop-filter:blur(20px);
+      position:sticky; top:0; z-index:50;
+    }
+    .land-nav-logo { display:flex; align-items:center; gap:10px; }
+    .logo-box {
+      width:38px; height:38px; border-radius:10px;
+      background:linear-gradient(135deg,var(--p),var(--s));
+      display:flex; align-items:center; justify-content:center; font-size:1.3rem;
+      box-shadow:0 4px 14px rgba(255,107,53,.3);
+    }
+    .logo-text { font-size:1.25rem; font-weight:800;
+      background:linear-gradient(135deg,var(--p),var(--s));
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+    .land-nav-links { display:flex; gap:10px; }
+    .land-nav-links button { padding:9px 20px; border-radius:var(--r); font-size:13px; font-weight:700; }
+
+    /* HERO */
+    .hero {
+      flex:1; display:grid; grid-template-columns:1fr 1fr;
+      gap:3rem; padding:80px 60px 60px; align-items:center; max-width:1300px; margin:0 auto; width:100%;
+    }
+    .hero-badge {
+      display:inline-flex; align-items:center; gap:8px;
+      background:rgba(255,107,53,.1); border:1px solid rgba(255,107,53,.25);
+      border-radius:99px; padding:6px 14px; font-size:12px; font-weight:700;
+      color:var(--p); margin-bottom:22px; font-family:var(--mono);
+    }
+    .hero-badge::before { content:''; width:7px; height:7px; border-radius:50%; background:var(--p); animation:pulse 2s infinite; }
+    .hero h1 { font-size:3.6rem; font-weight:900; line-height:1.08; margin-bottom:20px; letter-spacing:-.02em; }
+    .hero h1 .hl { background:linear-gradient(135deg,var(--p),var(--s)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+    .hero h1 .hl2 { background:linear-gradient(135deg,var(--acc),var(--acc2)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+    .hero-sub { font-size:1.1rem; color:var(--txm); margin-bottom:36px; line-height:1.65; max-width:480px; }
+    .hero-btns { display:flex; gap:12px; flex-wrap:wrap; margin-bottom:48px; }
+    .hero-stats { display:flex; gap:32px; }
+    .h-stat span { font-size:1.8rem; font-weight:800; background:linear-gradient(135deg,var(--p),var(--s)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+    .h-stat small { display:block; font-size:11px; color:var(--txd); text-transform:uppercase; letter-spacing:.06em; font-family:var(--mono); }
+
+    /* HERO VISUAL */
+    .hero-visual { position:relative; height:460px; }
+    .float-card {
+      position:absolute; background:var(--card); border:1.5px solid var(--bdr2);
+      border-radius:var(--r2); padding:16px 20px; box-shadow:var(--sh);
+      display:flex; align-items:center; gap:13px; font-weight:700; font-size:14px;
+      animation:float 3s ease-in-out infinite;
+    }
+    .float-card .fc-icon { font-size:1.8rem; }
+    .float-card .fc-sub { font-size:11px; color:var(--txm); font-family:var(--mono); margin-top:2px; }
+    .fc1 { top:8%;  left:5%;  animation-delay:0s;   border-color:rgba(255,107,53,.25); }
+    .fc2 { top:40%; right:2%; animation-delay:.6s;  border-color:rgba(78,205,196,.25); }
+    .fc3 { bottom:12%; left:18%; animation-delay:1.2s; border-color:rgba(247,147,30,.25); }
+    .fc-center {
+      position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+      width:170px; height:170px; border-radius:50%;
+      background:linear-gradient(135deg,rgba(255,107,53,.15),rgba(78,205,196,.15));
+      border:2px solid rgba(255,107,53,.2); display:flex; flex-direction:column;
+      align-items:center; justify-content:center; font-size:3.5rem;
+      box-shadow:0 0 60px rgba(255,107,53,.1);
+    }
+    .fc-center small { font-size:11px; font-weight:700; color:var(--p); text-transform:uppercase; letter-spacing:.05em; font-family:var(--mono); }
+
+    /* FEATURES */
+    .features { padding:60px; max-width:1300px; margin:0 auto; width:100%; }
+    .features-title { text-align:center; margin-bottom:44px; }
+    .features-title h2 { font-size:2rem; font-weight:800; margin-bottom:8px; }
+    .features-title p { color:var(--txm); }
+    .feat-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:18px; }
+    .feat-card {
+      background:var(--card); border:1.5px solid var(--bdr); border-radius:var(--r2);
+      padding:26px 24px; transition:all .22s var(--ease);
+    }
+    .feat-card:hover { border-color:var(--p); transform:translateY(-3px); box-shadow:var(--sh); }
+    .feat-icon { font-size:2.2rem; margin-bottom:14px; }
+    .feat-card h3 { font-size:16px; font-weight:700; margin-bottom:7px; }
+    .feat-card p { font-size:13px; color:var(--txm); line-height:1.6; }
+
+    /* CTA */
+    .land-cta {
+      margin:0 60px 60px; padding:50px 60px; border-radius:var(--r3);
+      background:linear-gradient(135deg, rgba(255,107,53,.12), rgba(78,205,196,.08));
+      border:1.5px solid rgba(255,107,53,.2); text-align:center;
+    }
+    .land-cta h2 { font-size:2rem; font-weight:800; margin-bottom:10px; }
+    .land-cta p { color:var(--txm); margin-bottom:28px; }
+
+    /* FOOTER */
+    .land-footer { padding:20px 60px; border-top:1px solid var(--bdr); text-align:center; color:var(--txd); font-size:12px; font-family:var(--mono); }
+
+    /* ═══════════════════════════════════════════
+       AUTH PAGES
+    ═══════════════════════════════════════════ */
+    .auth-page { min-height:100vh; display:flex; align-items:center; justify-content:center; padding:2rem; }
+    .auth-card {
+      background:var(--card); border:1.5px solid var(--bdr); border-radius:var(--r3);
+      padding:2.8rem 2.4rem; width:100%; max-width:420px;
+      box-shadow:var(--sh2); animation:fadeUp .5s var(--ease);
+    }
+    .auth-logo {
+      width:68px; height:68px; border-radius:16px; margin:0 auto 6px;
+      background:linear-gradient(135deg,var(--p),var(--s));
+      display:flex; align-items:center; justify-content:center; font-size:2rem;
+      box-shadow:0 8px 24px rgba(255,107,53,.28); animation:float 3s ease-in-out infinite;
+    }
+    .auth-title { text-align:center; font-size:1.8rem; font-weight:800;
+      background:linear-gradient(135deg,var(--p),var(--s));
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+      margin-bottom:4px; }
+    .auth-sub { text-align:center; color:var(--txm); font-size:13px; margin-bottom:20px; }
+    .auth-form { display:flex; flex-direction:column; gap:15px; }
+    .form-field { display:flex; flex-direction:column; gap:6px; }
+    .form-field label { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--txd); }
+    .field-hint { font-size:10px; color:var(--txd); font-family:var(--mono); }
+    .err-box { background:rgba(255,95,95,.1); border:1.5px solid rgba(255,95,95,.3); border-radius:var(--r);
+      padding:10px 14px; font-size:13px; font-weight:600; color:var(--err); }
+    .ok-box  { background:rgba(78,205,196,.1); border:1.5px solid rgba(78,205,196,.3); border-radius:var(--r);
+      padding:10px 14px; font-size:13px; font-weight:600; color:var(--acc); }
+    .auth-footer { text-align:center; color:var(--txm); font-size:13px; margin-top:16px; }
+    .link-btn { background:none; border:none; color:var(--p); font-weight:700; font-size:13px; transition:opacity .15s; }
+    .link-btn:hover { opacity:.75; text-decoration:underline; }
+    .tabs { display:flex; background:var(--surf2); border-radius:var(--r); padding:4px; gap:4px; margin-bottom:20px; }
+    .tab { flex:1; padding:9px; border-radius:9px; font-size:13px; font-weight:700; color:var(--txm); transition:all .2s var(--ease); text-align:center; }
+    .tab.active { background:linear-gradient(135deg,var(--p),var(--s)); color:#fff; }
+    .admin-hint { text-align:center; background:rgba(78,205,196,.07); border:1px solid rgba(78,205,196,.2); border-radius:var(--r); padding:10px 14px; font-size:11px; color:var(--acc); font-family:var(--mono); margin-bottom:4px; }
+
+    /* ═══════════════════════════════════════════
+       USER APP LAYOUT
+    ═══════════════════════════════════════════ */
+    .app-layout { display:flex; min-height:100vh; }
+    .sidebar {
+      width:var(--sw); background:var(--surf); border-right:1.5px solid var(--bdr);
+      display:flex; flex-direction:column; padding:20px 14px; gap:5px;
+      position:fixed; top:0; left:0; height:100vh; z-index:100;
+      transition:transform .25s var(--ease);
+    }
+    .sb-brand {
+      display:flex; align-items:center; gap:10px; padding:2px 8px 16px;
+      border-bottom:1px solid var(--bdr); margin-bottom:10px;
+    }
+    .sb-brand-icon { width:32px; height:32px; border-radius:8px;
+      background:linear-gradient(135deg,var(--p),var(--s));
+      display:flex; align-items:center; justify-content:center; font-size:1rem; flex-shrink:0; }
+    .sb-brand-name { font-size:15px; font-weight:800;
+      background:linear-gradient(135deg,var(--p),var(--s));
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+    .sb-nav { display:flex; flex-direction:column; gap:3px; flex:1; overflow-y:auto; }
+    .nb { text-align:left; padding:10px 13px; border-radius:10px; font-size:13.5px; font-weight:600;
+      color:var(--txm); transition:all .18s var(--ease); width:100%;
+      display:flex; align-items:center; gap:9px; }
+    .nb:hover { background:rgba(255,107,53,.07); color:var(--tx); }
+    .nb.active { background:rgba(255,107,53,.14); color:var(--p); }
+    .nb .nb-icon { font-size:1rem; width:20px; text-align:center; flex-shrink:0; }
+    .sb-footer { border-top:1px solid var(--bdr); padding-top:13px; display:flex; gap:8px; align-items:center; }
+    .ib { width:38px; height:38px; border-radius:9px; background:var(--surf2); border:1.5px solid var(--bdr);
+      display:flex; align-items:center; justify-content:center; font-size:16px;
+      transition:all .18s var(--ease); position:relative; flex-shrink:0; }
+    .ib:hover { border-color:var(--p); background:rgba(255,107,53,.08); }
+    .nb-dot { position:absolute; top:-3px; right:-3px; width:17px; height:17px;
+      background:var(--p); border-radius:50%; font-size:9px; font-weight:700;
+      color:#fff; display:flex; align-items:center; justify-content:center;
+      border:2px solid var(--surf); }
+    .sb-logout { flex:1; padding:9px 12px; border-radius:9px;
+      background:rgba(255,95,95,.09); color:var(--err);
+      border:1.5px solid rgba(255,95,95,.25); font-size:12px; font-weight:700;
+      transition:all .18s var(--ease); }
+    .sb-logout:hover { background:rgba(255,95,95,.18); }
+
+    .main-w { margin-left:var(--sw); flex:1; padding:30px 28px; min-height:100vh; }
+    .topbar {
+      display:none; position:fixed; top:0; left:0; right:0; height:var(--tb);
+      background:var(--surf); border-bottom:1.5px solid var(--bdr);
+      z-index:99; align-items:center; padding:0 16px; gap:12px;
+    }
+    .tb-title { flex:1; font-weight:700; font-size:16px; }
+
+    /* ── SECTION ── */
+    .sec { animation:fadeUp .2s var(--ease); }
+    .sec-hd { margin-bottom:24px; padding-bottom:18px; border-bottom:1.5px solid var(--bdr); display:flex; flex-direction:column; gap:4px; }
+    .sec-hd-row { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; flex-wrap:wrap; }
+    .sec-hd h2 { font-size:22px; font-weight:800; }
+    .sec-hd p { color:var(--txm); font-size:13px; }
+    .search-row { display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-top:14px; }
+    .search-row .inp { flex:1; min-width:160px; }
+
+    /* ── EVENT CARDS ── */
+    .ev-card-top { display:flex; justify-content:space-between; align-items:flex-start; }
+    .ev-title { font-weight:700; font-size:15px; line-height:1.35; }
+    .ev-meta { font-size:12px; color:var(--txm); font-family:var(--mono); display:flex; flex-direction:column; gap:3px; }
+    .ev-meta span { display:flex; align-items:center; gap:5px; }
+    .star-btn { font-size:18px; line-height:1; transition:transform .15s, color .15s; }
+    .star-btn:hover { transform:scale(1.25); }
+    .star-on { color:#F59E0B; }
+    .star-off { color:var(--bdr2); }
+
+    /* ── EVENT DETAIL ── */
+    .ev-detail { background:var(--card); border:1.5px solid var(--bdr); border-radius:var(--r2); padding:28px; max-width:680px; }
+    .ev-detail h2 { font-size:24px; font-weight:800; margin:10px 0 8px; }
+    .ev-detail-meta { display:flex; gap:16px; flex-wrap:wrap; color:var(--txm); font-size:13px; font-family:var(--mono); margin-bottom:16px; }
+    .ev-detail-desc { color:var(--txm); line-height:1.75; margin-bottom:22px; }
+    .ev-detail-actions { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+    .reg-badge { color:var(--ok); font-size:13px; font-weight:700; }
+
+    /* ── BACK BTN ── */
+    .back-btn { display:inline-flex; align-items:center; gap:7px; margin-bottom:20px;
+      color:var(--txm); font-size:13px; font-weight:600; padding:8px 14px;
+      border-radius:var(--r); background:var(--surf2); border:1.5px solid var(--bdr);
+      transition:all .18s var(--ease); }
+    .back-btn:hover { color:var(--tx); border-color:var(--p); }
+
+    /* ── TEAMMATE CARD ── */
+    .tm-top { display:flex; align-items:center; gap:12px; }
+    .av { width:42px; height:42px; border-radius:50%;
+      background:linear-gradient(135deg,var(--p),var(--s));
+      color:#fff; font-weight:800; display:flex; align-items:center; justify-content:center;
+      font-size:17px; flex-shrink:0; }
+    .av-lg { width:68px; height:68px; font-size:26px; }
+    .av-sm { width:36px; height:36px; font-size:14px; }
+    .tm-name { font-weight:700; font-size:14px; }
+    .tm-meta { font-size:11px; color:var(--txm); font-family:var(--mono); }
+    .skill-tags { display:flex; gap:5px; flex-wrap:wrap; }
+    .sk-tag { background:var(--surf2); border:1px solid var(--bdr); color:var(--txm);
+      font-size:10px; padding:2px 9px; border-radius:99px; font-family:var(--mono); }
+    .ca { display:flex; gap:7px; flex-wrap:wrap; margin-top:4px; }
+
+    /* ── GROUPS ── */
+    .member-chips { display:flex; gap:5px; flex-wrap:wrap; }
+
+    /* ── FRIENDS ── */
+    .fr-cols { display:grid; grid-template-columns:1fr 1fr; gap:24px; }
+    .fr-item { display:flex; align-items:center; gap:11px; background:var(--card);
+      border:1.5px solid var(--bdr); border-radius:var(--r); padding:12px 14px;
+      margin-bottom:8px; transition:border-color .18s var(--ease); }
+    .fr-item:hover { border-color:rgba(255,107,53,.22); }
+    .fr-info { flex:1; }
+    .fr-name { font-weight:700; font-size:13px; }
+    .fr-meta { font-size:11px; color:var(--txm); font-family:var(--mono); }
+
+    /* ── PROFILE ── */
+    .prof-card { background:var(--card); border:1.5px solid var(--bdr); border-radius:var(--r2);
+      padding:28px; max-width:540px; display:flex; flex-direction:column; gap:20px; }
+    .prof-stats { display:grid; grid-template-columns:repeat(4,1fr); border-top:1.5px solid var(--bdr); padding-top:18px; gap:0; }
+    .pstat { text-align:center; padding:0 10px; border-right:1px solid var(--bdr); }
+    .pstat:last-child { border:none; }
+    .pstat-num { font-size:24px; font-weight:800;
+      background:linear-gradient(135deg,var(--p),var(--s));
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+    .pstat-label { font-size:10px; color:var(--txd); text-transform:uppercase; letter-spacing:.05em; font-family:var(--mono); margin-top:2px; }
+
+    /* ── MODAL ── */
+    .overlay { position:fixed; inset:0; background:rgba(0,0,0,.6); z-index:200;
+      display:flex; align-items:center; justify-content:center;
+      backdrop-filter:blur(6px); animation:fadeIn .15s; }
+    .modal { background:var(--card); border:1.5px solid var(--bdr2); border-radius:var(--r2);
+      padding:26px; width:100%; max-width:420px; display:flex; flex-direction:column; gap:14px;
+      box-shadow:var(--sh2); animation:fadeUp .25s var(--ease); }
+    .modal h3 { font-size:18px; font-weight:800; }
+    .modal-actions { display:flex; gap:8px; margin-top:4px; }
+
+    /* ── NOTIF POPUP ── */
+    .notif-pop { position:fixed; bottom:20px; right:20px; width:300px;
+      background:var(--card); border:1.5px solid var(--bdr2); border-radius:var(--r2);
+      box-shadow:var(--sh2); z-index:300; overflow:hidden; animation:fadeUp .2s var(--ease); }
+    .notif-hd { display:flex; align-items:center; justify-content:space-between;
+      padding:12px 16px; border-bottom:1px solid var(--bdr); font-weight:700; font-size:13px; }
+    .notif-list-w { max-height:260px; overflow-y:auto; }
+    .notif-item { padding:10px 16px; font-size:12.5px; border-bottom:1px solid var(--bdr); line-height:1.45; }
+    .notif-item:last-child { border:none; }
+    .notif-time { font-size:10px; color:var(--txd); display:block; margin-top:2px; font-family:var(--mono); }
+    .notif-empty { padding:20px; text-align:center; color:var(--txd); font-size:13px; }
+
+    /* ── TOAST ── */
+    .toast-wrap { position:fixed; top:18px; left:50%; transform:translateX(-50%);
+      background:var(--tx); color:var(--bg); padding:10px 22px;
+      border-radius:99px; font-size:12.5px; font-weight:700; z-index:400;
+      animation:fadeUp .2s var(--ease); white-space:nowrap; font-family:var(--mono); }
+
+    /* ── EMPTY ── */
+    .empty { padding:48px 20px; text-align:center; color:var(--txm); }
+    .empty .ei { font-size:2.8rem; margin-bottom:12px; opacity:.35; }
+    .empty p { font-size:13px; }
+
+    /* ═══════════════════════════════════════════
+       ADMIN LAYOUT
+    ═══════════════════════════════════════════ */
+    .admin-layout { display:flex; min-height:100vh; flex-direction:column; }
+    .admin-nav {
+      display:flex; align-items:center; gap:16px; padding:0 28px;
+      height:60px; background:var(--surf); border-bottom:1.5px solid var(--bdr);
+      position:sticky; top:0; z-index:50;
+    }
+    .admin-nav-logo { display:flex; align-items:center; gap:9px; margin-right:10px; }
+    .admin-nav-links { display:flex; gap:6px; flex:1; }
+    .anl { padding:8px 14px; border-radius:var(--r); font-size:13px; font-weight:700;
+      color:var(--txm); transition:all .18s var(--ease); }
+    .anl:hover { background:rgba(255,107,53,.07); color:var(--tx); }
+    .anl.active { background:rgba(255,107,53,.14); color:var(--p); }
+    .admin-badge { background:rgba(255,107,53,.15); color:var(--p); border:1px solid rgba(255,107,53,.3);
+      border-radius:99px; padding:3px 10px; font-size:11px; font-weight:700; font-family:var(--mono); }
+    .admin-main { flex:1; padding:28px 28px; max-width:1100px; }
+
+    /* ADMIN STATS */
+    .admin-stats { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:28px; }
+    .astat { background:var(--card); border:1.5px solid var(--bdr); border-radius:var(--r2);
+      padding:20px 22px; transition:border-color .2s var(--ease); }
+    .astat:hover { border-color:rgba(255,107,53,.25); }
+    .astat-num { font-size:2rem; font-weight:800; line-height:1; margin-bottom:5px; }
+    .astat-label { font-size:11px; color:var(--txm); text-transform:uppercase; letter-spacing:.05em; font-family:var(--mono); }
+    .astat-icon { font-size:1.6rem; margin-bottom:10px; }
+
+    /* ADMIN TABLE */
+    .admin-table-wrap { background:var(--card); border:1.5px solid var(--bdr); border-radius:var(--r2); overflow:hidden; }
+    .admin-table-hd { display:flex; align-items:center; justify-content:space-between;
+      padding:16px 20px; border-bottom:1px solid var(--bdr); }
+    .admin-table-hd h3 { font-size:16px; font-weight:800; }
+    table { width:100%; border-collapse:collapse; }
+    th { padding:11px 16px; text-align:left; font-size:11px; font-weight:700;
+      text-transform:uppercase; letter-spacing:.05em; color:var(--txd);
+      background:var(--surf2); border-bottom:1px solid var(--bdr); font-family:var(--mono); }
+    td { padding:12px 16px; font-size:13px; border-bottom:1px solid var(--bdr); vertical-align:middle; }
+    tr:last-child td { border:none; }
+    tr:hover td { background:rgba(255,255,255,.02); }
+    .td-actions { display:flex; gap:7px; }
+
+    /* ADMIN FORM */
+    .admin-form-card { background:var(--card); border:1.5px solid var(--bdr); border-radius:var(--r2); padding:24px; max-width:620px; }
+    .admin-form-card h2 { font-size:18px; font-weight:800; margin-bottom:20px; }
+    .admin-form { display:flex; flex-direction:column; gap:15px; }
+    .form-row { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+
+    /* RESPONSIVE */
+    @media (max-width:900px) {
+      .land-nav { padding:14px 24px; }
+      .hero { grid-template-columns:1fr; padding:50px 24px 40px; gap:2rem; }
+      .hero h1 { font-size:2.6rem; }
+      .hero-visual { height:250px; }
+      .features { padding:40px 24px; }
+      .feat-grid { grid-template-columns:1fr 1fr; }
+      .land-cta { margin:0 24px 40px; padding:36px 24px; }
+      .land-footer { padding:16px 24px; }
+    }
+    @media (max-width:720px) {
+      .sidebar { transform:translateX(-100%); }
+      .sidebar.open { transform:none; }
+      .topbar { display:flex !important; }
+      .main-w { margin-left:0; padding:72px 16px 24px; }
+      .fr-cols { grid-template-columns:1fr; }
+      .search-row { flex-direction:column; }
+      .search-row .inp { width:100%; }
+      .admin-stats { grid-template-columns:1fr 1fr; }
+      .form-row { grid-template-columns:1fr; }
+      .admin-main { padding:20px 16px; }
+      .feat-grid { grid-template-columns:1fr; }
+    }
+    @media (min-width:721px) { .topbar { display:none !important; } }
+  </style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useEffect, useRef } = React;
+
+const COLLEGE_DOMAIN = 'student.sfit.ac.in';
+const ADMIN_EMAIL    = 'demo@admin.sfit.ac.in';
+const ADMIN_PASS     = '123456';
+
+const MOCK_EVENTS = [
+  { id:1, title:'Hackathon 2026',       category:'Tech',     date:'2026-03-15', desc:'24-hour coding challenge. Build something amazing with your team. Open to all departments.', organizer:'CS Club', participants:150 },
+  { id:2, title:'Spring Cultural Fest', category:'Cultural', date:'2026-03-20', desc:'Dance, music, drama performances from 30+ clubs. Free entry for students.',                  organizer:'Cultural Committee', participants:400 },
+  { id:3, title:'Inter-Dept Football',  category:'Sports',   date:'2026-03-22', desc:'Annual inter-department football tournament. Register your team before March 18.',          organizer:'Sports Council', participants:80 },
+  { id:4, title:'Resume Workshop',      category:'Workshop', date:'2026-04-01', desc:'Industry professionals guide you on building the perfect resume and LinkedIn profile.',      organizer:'Placement Cell', participants:120 },
+  { id:5, title:'AI/ML Seminar',        category:'Tech',     date:'2026-04-05', desc:'Guest lecture on practical applications of AI in industry. Hands-on demo session included.', organizer:'IEEE Student Branch', participants:200 },
+  { id:6, title:'Photography Contest',  category:'Cultural', date:'2026-04-10', desc:'Submit your best campus photos. Top 10 entries get displayed in the gallery.',              organizer:'Art Club', participants:60 }
+];
+const MOCK_USERS = [
+  { id:1, name:'Arjun Mehta',  dept:'CSE',   year:'3rd Year', gender:'Male',   skills:['React','Node.js','ML'] },
+  { id:2, name:'Priya Sharma', dept:'ECE',   year:'2nd Year', gender:'Female', skills:['Circuit Design','Python','IoT'] },
+  { id:3, name:'Rahul Das',    dept:'MECH',  year:'4th Year', gender:'Male',   skills:['CAD','Simulation','MATLAB'] },
+  { id:4, name:'Sneha Patel',  dept:'CSE',   year:'1st Year', gender:'Female', skills:['HTML','CSS','JavaScript'] },
+  { id:5, name:'Kiran Nair',   dept:'MBA',   year:'2nd Year', gender:'Male',   skills:['Marketing','Finance','Analytics'] },
+  { id:6, name:'Divya Rao',    dept:'CIVIL', year:'3rd Year', gender:'Female', skills:['AutoCAD','Project Mgmt','GIS'] },
+  { id:7, name:'Aman Khan',    dept:'CSE',   year:'4th Year', gender:'Male',   skills:['Backend','DevOps','Cloud'] },
+  { id:8, name:'Ritu Singh',   dept:'ECE',   year:'3rd Year', gender:'Female', skills:['Embedded','FPGA','Verilog'] }
+];
+
+/* ── HELPERS ── */
+const catClass = c => ({ Tech:'tag-tech', Cultural:'tag-cultural', Sports:'tag-sports', Workshop:'tag-workshop', Hackathon:'tag-hackathon', Technical:'tag-technical', Competition:'tag-competition' }[c] || 'tag-default');
+const Tag = ({ cat }) => <span className={`tag ${catClass(cat)}`}>{cat}</span>;
+const Toast = ({ msg }) => msg ? <div className="toast-wrap">{msg}</div> : null;
+
+/* ── MODAL ── */
+const Modal = ({ children, onClose }) => (
+  <div className="overlay" onClick={e => e.target===e.currentTarget && onClose()}>
+    <div className="modal">{children}</div>
+  </div>
+);
+
+/* ── NOTIF POPUP ── */
+const NotifPopup = ({ notifs, onClose }) => (
+  <div>
+    <div style={{position:'fixed',inset:0,zIndex:299}} onClick={onClose}/>
+    <div className="notif-pop">
+      <div className="notif-hd">
+        <span>🔔 Notifications</span>
+        <button onClick={onClose} style={{color:'var(--txm)',fontSize:12,fontWeight:700}}>✕</button>
+      </div>
+      <div className="notif-list-w">
+        {notifs.length===0
+          ? <div className="notif-empty">No notifications yet</div>
+          : notifs.map((n,i) => <div key={i} className="notif-item">{n.msg}<span className="notif-time">{n.time}</span></div>)
+        }
+      </div>
+    </div>
+  </div>
+);
+
+/* ── GROUP PICKER ── */
+const GroupPickerModal = ({ groups, target, onPick, onClose }) => (
+  <Modal onClose={onClose}>
+    <h3>Add {target?.name} to Group</h3>
+    <p className="txt-m" style={{marginTop:-6}}>Select a group:</p>
+    <div style={{display:'flex',flexDirection:'column',gap:7,marginTop:4}}>
+      {groups.map((g,i) => (
+        <button key={i} className="btn btn-g" style={{justifyContent:'flex-start'}} onClick={() => onPick(i)}>
+          👥 {g.name}
+          <span style={{marginLeft:'auto',fontSize:11,color:'var(--txd)'}}>{g.members.length} members</span>
+        </button>
+      ))}
+    </div>
+    <div className="modal-actions"><button className="btn btn-g btn-sm" onClick={onClose}>Cancel</button></div>
+  </Modal>
+);
+
+/* ══════════════════════════════════════════
+   LANDING PAGE
+══════════════════════════════════════════ */
+const LandingPage = ({ onNavigate }) => {
+  const features = [
+    { icon:'📅', title:'Campus Events',     desc:'Browse, register & track all intra-college events in one place — from hackathons to cultural fests.' },
+    { icon:'🔍', title:'Find Teammates',    desc:'Search by department, year, skills and gender to build your perfect team for any competition.' },
+    { icon:'👥', title:'Group Management',  desc:'Create groups, add teammates and collaborate efficiently with your squad across multiple events.' },
+    { icon:'❤️', title:'Friend Network',    desc:'Send friend requests, grow your campus network and stay connected with people who inspire you.' },
+    { icon:'🏆', title:'Inter-College',     desc:'Discover opportunities beyond campus — explore hackathons and competitions from Unstop and more.' },
+    { icon:'🔔', title:'Real-time Alerts',  desc:'Never miss a deadline — get instant notifications for registrations, requests and group activity.' },
+  ];
+  return (
+    <div className="landing">
+      <nav className="land-nav">
+        <div className="land-nav-logo">
+          <div className="logo-box">🏆</div>
+          <span className="logo-text">CampusConnect</span>
+        </div>
+        <div className="land-nav-links">
+          <button className="btn btn-g btn-sm" onClick={() => onNavigate('login')}>Sign In</button>
+          <button className="btn btn-p btn-sm" onClick={() => onNavigate('signup')}>Get Started</button>
+          <button className="btn btn-acc btn-sm" onClick={() => onNavigate('admin-login')}>Admin ↗</button>
+        </div>
+      </nav>
+
+      <div className="hero">
+        <div style={{animation:'fadeUp .7s ease'}}>
+          <div className="hero-badge">🎓 SFIT College Platform</div>
+          <h1>Find Your<br/><span className="hl">Dream Team,</span><br/><span className="hl2">Win Together</span></h1>
+          <p className="hero-sub">Connect with talented students for hackathons, competitions and campus events. Build your network, showcase skills, and collaborate like never before.</p>
+          <div className="hero-btns">
+            <button className="btn btn-p" style={{padding:'13px 28px',fontSize:15}} onClick={() => onNavigate('signup')}>
+              🚀 Join CampusConnect
+            </button>
+            <button className="btn btn-g" style={{padding:'13px 24px',fontSize:15}} onClick={() => onNavigate('login')}>
+              Sign In
+            </button>
+          </div>
+          <div className="hero-stats">
+            {[['500+','Students'],['30+','Events'],['100+','Teams'],['50+','Clubs']].map(([n,l]) => (
+              <div key={l} className="h-stat"><span>{n}</span><small>{l}</small></div>
+            ))}
+          </div>
+        </div>
+        <div className="hero-visual">
+          <div className="float-card fc1"><span className="fc-icon">🏆</span><div><div>Hackathons</div><div className="fc-sub">24-hour challenges</div></div></div>
+          <div className="float-card fc2"><span className="fc-icon">⚡</span><div><div>Competitions</div><div className="fc-sub">Win prizes</div></div></div>
+          <div className="float-card fc3"><span className="fc-icon">🎯</span><div><div>Team Building</div><div className="fc-sub">Find the right fit</div></div></div>
+          <div className="fc-center"><span>👥</span><small>Campus</small></div>
+        </div>
+      </div>
+
+      <div className="features">
+        <div className="features-title">
+          <h2>Everything You Need</h2>
+          <p>Built for students, by students — one platform to rule your campus life</p>
+        </div>
+        <div className="feat-grid">
+          {features.map((f,i) => (
+            <div key={i} className="feat-card">
+              <div className="feat-icon">{f.icon}</div>
+              <h3>{f.title}</h3>
+              <p>{f.desc}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="land-cta">
+        <h2>Ready to Build Your Dream Team?</h2>
+        <p>Join hundreds of SFIT students already using CampusConnect</p>
+        <div style={{display:'flex',gap:12,justifyContent:'center',flexWrap:'wrap'}}>
+          <button className="btn btn-p" style={{padding:'13px 28px',fontSize:15}} onClick={() => onNavigate('signup')}>
+            Create Free Account
+          </button>
+          <a href="https://unstop.com" target="_blank" rel="noopener noreferrer"
+            className="btn btn-acc" style={{padding:'13px 24px',fontSize:15}}>
+            Explore Unstop 🔗
+          </a>
+        </div>
+      </div>
+
+      <div className="land-footer">
+        © 2026 CampusConnect · SFIT · Built for students
+      </div>
+    </div>
+  );
+};
+
+/* ══════════════════════════════════════════
+   AUTH PAGES
+══════════════════════════════════════════ */
+const SignupPage = ({ onNavigate }) => {
+  const [fd, setFd] = useState({ fullName:'', email:'', password:'', confirm:'' });
+  const [err, setErr] = useState(''); const [ok, setOk] = useState('');
+  const upd = k => e => setFd({...fd,[k]:e.target.value});
+
+  const submit = () => {
+    setErr('');
+    const domain = fd.email.split('@')[1];
+    if (domain !== COLLEGE_DOMAIN) { setErr(`Only @${COLLEGE_DOMAIN} emails allowed`); return; }
+    if (fd.password !== fd.confirm) { setErr('Passwords do not match'); return; }
+    if (fd.password.length < 6)     { setErr('Password must be at least 6 characters'); return; }
+    const users = JSON.parse(localStorage.getItem('cc_users') || '{}');
+    const key = fd.email.split('@')[0];
+    if (users[key]) { setErr('User already exists'); return; }
+    users[key] = { fullName:fd.fullName, email:fd.email, password:fd.password, profile:{dept:'',year:'1st Year',gender:'Male',skills:[]} };
+    localStorage.setItem('cc_users', JSON.stringify(users));
+    setOk('Account created! Redirecting to login…');
+    setTimeout(() => onNavigate('login'), 1500);
+  };
+
+  return (
+    <div className="auth-page">
+      <div className="auth-card">
+        <div className="auth-logo">🏆</div>
+        <div className="auth-title">Join the Squad</div>
+        <p className="auth-sub">Connect with teammates across campus</p>
+        <div className="auth-form">
+          {[
+            {k:'fullName',label:'👤 Full Name',type:'text',ph:'John Doe'},
+            {k:'email',  label:'✉️ College Email',type:'email',ph:`john.doe@${COLLEGE_DOMAIN}`, hint:`Only @${COLLEGE_DOMAIN} allowed`},
+            {k:'password',label:'🔒 Password',type:'password',ph:'Min 6 characters'},
+            {k:'confirm', label:'🔒 Confirm Password',type:'password',ph:'Repeat password'},
+          ].map(f => (
+            <div key={f.k} className="form-field">
+              <label>{f.label}</label>
+              <input className="inp" type={f.type} value={fd[f.k]} onChange={upd(f.k)} placeholder={f.ph}/>
+              {f.hint && <span className="field-hint">{f.hint}</span>}
+            </div>
+          ))}
+          {err && <div className="err-box">{err}</div>}
+          {ok  && <div className="ok-box">{ok}</div>}
+          <button className="btn btn-p btn-full" onClick={submit}>Create Account 🚀</button>
+        </div>
+        <div className="auth-footer">
+          Already have an account? <button className="link-btn" onClick={() => onNavigate('login')}>Sign In</button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const LoginPage = ({ onLogin, onNavigate, adminMode }) => {
+  const [email, setEmail] = useState(adminMode ? ADMIN_EMAIL : '');
+  const [pass,  setPass]  = useState(adminMode ? ADMIN_PASS  : '');
+  const [err,   setErr]   = useState('');
+
+  const submit = () => {
+    setErr('');
+    if (email === ADMIN_EMAIL && pass === ADMIN_PASS) { onLogin('__admin__', true); return; }
+    const users = JSON.parse(localStorage.getItem('cc_users') || '{}');
+    const key = email.split('@')[0];
+    const u = users[key];
+    if (!u) { setErr('User not found. Please sign up first.'); return; }
+    if (u.password !== pass) { setErr('Invalid password.'); return; }
+    onLogin(key, false);
+  };
+
+  return (
+    <div className="auth-page">
+      <div className="auth-card">
+        <div className="auth-logo" style={adminMode?{background:'linear-gradient(135deg,var(--acc),var(--acc2))'}:{}}>{adminMode?'👨‍💼':'🏆'}</div>
+        <div className="auth-title">{adminMode ? 'Admin Portal' : 'Welcome Back'}</div>
+        <p className="auth-sub">{adminMode ? 'CampusConnect Administration' : 'Continue your campus journey'}</p>
+        <div className="auth-form">
+          <div className="form-field">
+            <label>✉️ Email</label>
+            <input className="inp" type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder={adminMode ? ADMIN_EMAIL : `your.name@${COLLEGE_DOMAIN}`}/>
+          </div>
+          <div className="form-field">
+            <label>🔒 Password</label>
+            <input className="inp" type="password" value={pass} onChange={e => setPass(e.target.value)} placeholder="Your password"
+              onKeyDown={e => e.key==='Enter' && submit()}/>
+          </div>
+          {err && <div className="err-box">{err}</div>}
+          <div className="admin-hint">{adminMode ? '🔑 Admin credentials pre-filled' : 'Admin: demo@admin.sfit.ac.in / 123456'}</div>
+          <button className={`btn btn-full ${adminMode?'btn-acc':'btn-p'}`} onClick={submit}>
+            {adminMode ? '🔐 Login as Admin' : 'Sign In 🚀'}
+          </button>
+        </div>
+        <div className="auth-footer">
+          {adminMode
+            ? <button className="link-btn" onClick={() => onNavigate('landing')}>← Back to Home</button>
+            : <><span>New here? </span><button className="link-btn" onClick={() => onNavigate('signup')}>Create Account</button>{' · '}<button className="link-btn" onClick={() => onNavigate('landing')}>← Back</button></>
+          }
+        </div>
+      </div>
+    </div>
+  );
+};
+
+/* ══════════════════════════════════════════
+   USER APP
+══════════════════════════════════════════ */
+const USER_NAV = [
+  {id:'events',    icon:'📅', label:'Events'},
+  {id:'teammates', icon:'🔍', label:'Teammates'},
+  {id:'groups',    icon:'👥', label:'Groups'},
+  {id:'friends',   icon:'❤️', label:'Friends'},
+  {id:'profile',   icon:'👤', label:'Profile'},
+];
+const SEC_LABELS = { events:'Events', teammates:'Teammates', groups:'Groups', friends:'Friends', profile:'Profile', 'event-detail':'Event Detail' };
+
+const UserSidebar = ({ sec, onNav, onLogout, onNotif, notifCount, open, onClose }) => (
+  <aside className={`sidebar${open?' open':''}`}>
+    <div className="sb-brand">
+      <div className="sb-brand-icon">🏆</div>
+      <span className="sb-brand-name">CampusConnect</span>
+    </div>
+    <nav className="sb-nav">
+      {USER_NAV.map(n => (
+        <button key={n.id} className={`nb${sec===n.id?' active':''}`} onClick={() => { onNav(n.id); onClose(); }}>
+          <span className="nb-icon">{n.icon}</span>{n.label}
+        </button>
+      ))}
+    </nav>
+    <div className="sb-footer">
+      <button className="ib" onClick={onNotif} title="Notifications">
+        🔔{notifCount>0 && <span className="nb-dot">{notifCount}</span>}
+      </button>
+      <button className="sb-logout" onClick={onLogout}>Logout</button>
+    </div>
+  </aside>
+);
+
+/* Events */
+const EventsSection = ({ st, onView, onReg, onWish }) => {
+  const [q, setQ]=useState(''); const [cat, setCat]=useState(''); const [dt, setDt]=useState('');
+  const list = st.events.filter(e =>
+    (!q || e.title.toLowerCase().includes(q.toLowerCase()) || e.organizer.toLowerCase().includes(q.toLowerCase()))
+    && (!cat || e.category===cat) && (!dt || e.date===dt)
+  );
+  return (
+    <div className="sec">
+      <div className="sec-hd">
+        <h2>Events</h2>
+        <p>Discover and register for campus events</p>
+        <div className="search-row">
+          <input className="inp" placeholder="Search events or organizer…" value={q} onChange={e=>setQ(e.target.value)}/>
+          <select className="inp" value={cat} onChange={e=>setCat(e.target.value)} style={{width:'auto',minWidth:130}}>
+            <option value="">All Categories</option>
+            {['Tech','Cultural','Sports','Workshop'].map(c=><option key={c}>{c}</option>)}
+          </select>
+          <input className="inp" type="date" value={dt} onChange={e=>setDt(e.target.value)} style={{width:'auto',minWidth:148}}/>
+        </div>
+      </div>
+      {!list.length ? <div className="empty"><div className="ei">🔭</div><p>No events found</p></div>
+        : <div className="card-grid">
+          {list.map(ev => (
+            <div key={ev.id} className="card">
+              <div className="ev-card-top">
+                <Tag cat={ev.category}/>
+                <button className={`star-btn ${st.wishlist.includes(ev.id)?'star-on':'star-off'}`} onClick={() => onWish(ev.id)}>★</button>
+              </div>
+              <div className="ev-title">{ev.title}</div>
+              <div className="ev-meta">
+                <span>📅 {ev.date}</span>
+                <span>🏫 {ev.organizer}</span>
+                {ev.participants && <span>👥 {ev.participants} participants</span>}
+              </div>
+              <div className="ca">
+                <button className="btn btn-g btn-sm" onClick={() => onView(ev.id)}>View Details</button>
+                <button className={`btn btn-sm ${st.registered.includes(ev.id)?'btn-g':'btn-p'}`} onClick={() => onReg(ev.id)}>
+                  {st.registered.includes(ev.id)?'✓ Registered':'Register'}
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      }
+    </div>
+  );
+};
+
+const EventDetail = ({ ev, st, onBack, onReg, onWish }) => {
+  if (!ev) return null;
+  return (
+    <div className="sec">
+      <button className="back-btn" onClick={onBack}>← Back to Events</button>
+      <div className="ev-detail">
+        <div style={{display:'flex',gap:9,alignItems:'center'}}>
+          <Tag cat={ev.category}/>
+          <button className={`star-btn ${st.wishlist.includes(ev.id)?'star-on':'star-off'}`} onClick={() => onWish(ev.id)}>
+            ★ Wishlist
+          </button>
+        </div>
+        <h2>{ev.title}</h2>
+        <div className="ev-detail-meta">
+          <span>📅 {ev.date}</span><span>🏫 {ev.organizer}</span>
+          {ev.participants && <span>👥 {ev.participants}</span>}
+        </div>
+        <p className="ev-detail-desc">{ev.desc}</p>
+        <div className="ev-detail-actions">
+          <button className={`btn ${st.registered.includes(ev.id)?'btn-g':'btn-p'}`} onClick={() => onReg(ev.id)}>
+            {st.registered.includes(ev.id)?'✓ Registered':'Register Now'}
+          </button>
+          {st.registered.includes(ev.id) && <span className="reg-badge">✓ You are registered!</span>}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const TeammatesSection = ({ st, onFR, onJR, onAG }) => {
+  const [q, setQ]=useState(''); const [yr, setYr]=useState(''); const [dp, setDp]=useState(''); const [gn, setGn]=useState('');
+  const list = st.teammates.filter(u => u.name !== st.user?.fullName && u.name !== st.user?.name)
+    .filter(u =>
+      (!q || u.name.toLowerCase().includes(q.toLowerCase()) || u.skills.some(s=>s.toLowerCase().includes(q.toLowerCase())))
+      && (!yr || u.year===yr) && (!dp || u.dept===dp) && (!gn || u.gender===gn)
+    );
+  return (
+    <div className="sec">
+      <div className="sec-hd">
+        <h2>Find Teammates</h2>
+        <p>Connect with students who share your interests</p>
+        <div className="search-row">
+          <input className="inp" placeholder="Search name or skill…" value={q} onChange={e=>setQ(e.target.value)}/>
+          {[
+            {v:yr,s:setYr,opts:['1st Year','2nd Year','3rd Year','4th Year'],ph:'All Years'},
+            {v:dp,s:setDp,opts:['CSE','ECE','MECH','CIVIL','MBA'],ph:'All Depts'},
+            {v:gn,s:setGn,opts:['Male','Female','Other'],ph:'All'},
+          ].map((f,i) => (
+            <select key={i} className="inp" value={f.v} onChange={e=>f.s(e.target.value)} style={{width:'auto',minWidth:118}}>
+              <option value="">{f.ph}</option>
+              {f.opts.map(o => <option key={o}>{o}</option>)}
+            </select>
+          ))}
+        </div>
+      </div>
+      {!list.length ? <div className="empty"><div className="ei">🔍</div><p>No teammates found</p></div>
+        : <div className="card-grid">
+          {list.map(u => {
+            const isFr  = st.friends.includes(u.id);
+            const hasFR = st.requests.some(r=>r.to===u.id && r.type==='friend');
+            const hasJR = st.requests.some(r=>r.to===u.id && r.type==='join');
+            return (
+              <div key={u.id} className="card">
+                <div className="tm-top">
+                  <div className="av">{u.name[0]}</div>
+                  <div><div className="tm-name">{u.name}</div><div className="tm-meta">{u.dept} · {u.year} · {u.gender}</div></div>
+                </div>
+                <div className="skill-tags">{u.skills.map(s=><span key={s} className="sk-tag">{s}</span>)}</div>
+                <div className="ca">
+                  {isFr  ? <span className="btn btn-g btn-sm" style={{opacity:.6,pointerEvents:'none'}}>Friends ✓</span>
+                  : hasFR ? <span className="btn btn-g btn-sm" style={{opacity:.6,pointerEvents:'none'}}>Request Sent</span>
+                  : <button className="btn btn-g btn-sm" onClick={() => onFR(u.id)}>+ Add Friend</button>}
+                  {hasJR ? <span className="btn btn-g btn-sm" style={{opacity:.6,pointerEvents:'none'}}>Join Sent</span>
+                  : <button className="btn btn-p btn-sm" onClick={() => onJR(u.id)}>Join Request</button>}
+                  <button className="btn btn-g btn-sm" onClick={() => onAG(u.id)}>Add to Group</button>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      }
+    </div>
+  );
+};
+
+const GroupsSection = ({ st, onCreate, onDel, onView }) => (
+  <div className="sec">
+    <div className="sec-hd">
+      <div className="sec-hd-row">
+        <div><h2>Groups</h2><p>Manage your teams and project groups</p></div>
+        <button className="btn btn-p" onClick={onCreate}>+ Create Group</button>
+      </div>
+    </div>
+    {!st.groups.length ? <div className="empty"><div className="ei">👥</div><p>No groups yet — create one!</p></div>
+      : <div className="card-grid">
+        {st.groups.map((g,i) => (
+          <div key={i} className="card">
+            <div style={{fontWeight:700,fontSize:15}}>{g.name}</div>
+            <div className="txt-m" style={{fontSize:13}}>{g.desc||'No description'}</div>
+            <div className="member-chips">{g.members.map((m,j)=><span key={j} className="chip">{m}</span>)}</div>
+            <div className="ca">
+              <button className="btn btn-g btn-sm" onClick={() => onView(i)}>View</button>
+              <button className="btn btn-d btn-sm" onClick={() => onDel(i)}>Delete</button>
+            </div>
+          </div>
+        ))}
+      </div>
+    }
+  </div>
+);
+
+const FriendsSection = ({ st, onAcc, onDec, onRem }) => {
+  const pending = st.requests.filter(r=>r.type==='friend');
+  const fUsers  = st.teammates.filter(u=>st.friends.includes(u.id));
+  return (
+    <div className="sec">
+      <div className="sec-hd"><h2>Friends</h2><p>Your connections on campus</p></div>
+      <div className="fr-cols">
+        <div>
+          <p className="lbl" style={{marginBottom:12}}>Friend Requests</p>
+          {!pending.length ? <div style={{color:'var(--txd)',fontSize:13}}>No pending requests</div>
+            : pending.map((r,i) => (
+              <div key={i} className="fr-item">
+                <div className="av av-sm">{r.name?.[0]||'?'}</div>
+                <div className="fr-info"><div className="fr-name">{r.name}</div><div className="fr-meta">Pending request</div></div>
+                <button className="btn btn-p btn-xs" onClick={() => onAcc(r.to)}>Accept</button>
+                <button className="btn btn-g btn-xs" onClick={() => onDec(r.to)}>Decline</button>
+              </div>
+            ))
+          }
+        </div>
+        <div>
+          <p className="lbl" style={{marginBottom:12}}>Your Friends ({fUsers.length})</p>
+          {!fUsers.length ? <div style={{color:'var(--txd)',fontSize:13}}>No friends yet</div>
+            : fUsers.map(u => (
+              <div key={u.id} className="fr-item">
+                <div className="av av-sm">{u.name[0]}</div>
+                <div className="fr-info"><div className="fr-name">{u.name}</div><div className="fr-meta">{u.dept} · {u.year}</div></div>
+                <button className="btn btn-g btn-xs" onClick={() => onRem(u.id)}>Remove</button>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const ProfileSection = ({ st, onSave }) => {
+  const u = st.user || {};
+  const [name, setName] = useState(u.fullName||u.name||'');
+  const [dept, setDept] = useState(u.dept||'');
+  const [year, setYear] = useState(u.year||'1st Year');
+  const [gender, setGender] = useState(u.gender||'Male');
+  const [skills, setSkills] = useState((u.skills||[]).join(', '));
+  useEffect(() => {
+    setName(u.fullName||u.name||''); setDept(u.dept||'');
+    setYear(u.year||'1st Year'); setGender(u.gender||'Male');
+    setSkills((u.skills||[]).join(', '));
+  }, [st.user]);
+  return (
+    <div className="sec">
+      <div className="sec-hd"><h2>Profile</h2><p>Manage your campus identity</p></div>
+      <div className="prof-card">
+        <div style={{display:'flex',justifyContent:'center'}}>
+          <div className="av av-lg">{name?.[0]?.toUpperCase()||'U'}</div>
+        </div>
+        <div style={{display:'flex',flexDirection:'column',gap:12}}>
+          {[{lbl:'Full Name',v:name,s:setName,ph:'Your name'},{lbl:'Department',v:dept,s:setDept,ph:'e.g. CSE'}].map(f=>(
+            <div key={f.lbl}><div className="lbl">{f.lbl}</div><input className="inp" value={f.v} onChange={e=>f.s(e.target.value)} placeholder={f.ph}/></div>
+          ))}
+          <div><div className="lbl">Year</div>
+            <select className="inp" value={year} onChange={e=>setYear(e.target.value)}>
+              {['1st Year','2nd Year','3rd Year','4th Year'].map(y=><option key={y}>{y}</option>)}
+            </select>
+          </div>
+          <div><div className="lbl">Gender</div>
+            <select className="inp" value={gender} onChange={e=>setGender(e.target.value)}>
+              {['Male','Female','Other'].map(g=><option key={g}>{g}</option>)}
+            </select>
+          </div>
+          <div><div className="lbl">Skills (comma separated)</div>
+            <input className="inp" value={skills} onChange={e=>setSkills(e.target.value)} placeholder="React, Python, …"/>
+          </div>
+          <button className="btn btn-p" onClick={() => onSave({fullName:name,dept,year,gender,skills:skills.split(',').map(s=>s.trim()).filter(Boolean)})}>
+            Save Changes ✓
+          </button>
+        </div>
+        <div className="prof-stats">
+          {[{n:st.registered.length,l:'Registered'},{n:st.friends.length,l:'Friends'},{n:st.groups.length,l:'Groups'},{n:st.wishlist.length,l:'Wishlist'}].map(s=>(
+            <div key={s.l} className="pstat"><div className="pstat-num">{s.n}</div><div className="pstat-label">{s.l}</div></div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const UserApp = ({ userKey, onLogout }) => {
+  const getUser = () => {
+    const users = JSON.parse(localStorage.getItem('cc_users')||'{}');
+    return users[userKey] || { fullName:userKey, dept:'', year:'1st Year', gender:'Male', skills:[] };
+  };
+  const [sec, setSec] = useState('events');
+  const [events, setEvents] = useState(() => {
+    const saved = localStorage.getItem('cc_events');
+    return saved ? JSON.parse(saved) : MOCK_EVENTS.map(e=>({...e}));
+  });
+  const [teammates]    = useState(MOCK_USERS.map(u=>({...u})));
+  const [groups, setGroups] = useState([]);
+  const [friends, setFriends] = useState([]);
+  const [requests, setRequests] = useState([]);
+  const [notifs, setNotifs] = useState([]);
+  const [wishlist, setWishlist] = useState([]);
+  const [registered, setRegistered] = useState([]);
+  const [user, setUser] = useState(getUser);
+  const [toast, setToast] = useState('');
+  const [showNotif, setShowNotif] = useState(false);
+  const [notifUnread, setNotifUnread] = useState(0);
+  const [selEvId, setSelEvId] = useState(null);
+  const [sbOpen, setSbOpen] = useState(false);
+  const [showCG, setShowCG] = useState(false);
+  const [showGD, setShowGD] = useState(null);
+  const [gpFor, setGpFor] = useState(null);
+  const [grpName, setGrpName] = useState(''); const [grpDesc, setGrpDesc] = useState('');
+  const tRef = useRef(null);
+
+  useEffect(() => {
+    const saved = localStorage.getItem('cc_events');
+    if (saved) setEvents(JSON.parse(saved));
+  }, []);
+
+  const showToast = msg => { setToast(msg); clearTimeout(tRef.current); tRef.current=setTimeout(()=>setToast(''),2500); };
+  const addNotif  = msg => {
+    const time = new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+    setNotifs(n=>[{msg,time},...n]); setNotifUnread(c=>c+1);
+  };
+
+  useEffect(() => { addNotif('Welcome back, ' + (user.fullName||user.name||userKey) + '! 👋'); }, []);
+
+  const nav = id => { setSec(id); if (id!=='event-detail') setSelEvId(null); };
+
+  const st = { user, events, teammates, groups, friends, requests, notifs, wishlist, registered };
+
+  return (
+    <div className="app-layout">
+      <UserSidebar sec={sec} onNav={nav} onLogout={onLogout}
+        onNotif={() => { setShowNotif(true); setNotifUnread(0); }}
+        notifCount={notifUnread} open={sbOpen} onClose={() => setSbOpen(false)}/>
+
+      <div className="topbar" style={{display:'flex'}}>
+        <button style={{fontSize:21}} onClick={() => setSbOpen(o=>!o)}>☰</button>
+        <span className="tb-title">{SEC_LABELS[sec]||'CampusConnect'}</span>
+      </div>
+
+      <main className="main-w">
+        {sec==='events'       && <EventsSection    st={st} onView={id=>{setSelEvId(id);setSec('event-detail');}} onReg={id=>{if(registered.includes(id)){setRegistered(r=>r.filter(x=>x!==id));showToast('Registration cancelled');}else{setRegistered(r=>[...r,id]);addNotif('Registered for '+(events.find(e=>e.id===id)?.title||'event'));showToast('Registered successfully! ✓');} }} onWish={id=>{if(wishlist.includes(id)){setWishlist(w=>w.filter(x=>x!==id));showToast('Removed from wishlist');}else{setWishlist(w=>[...w,id]);showToast('Added to wishlist ★');}}} />}
+        {sec==='event-detail' && <EventDetail      ev={events.find(e=>e.id===selEvId)} st={st} onBack={()=>setSec('events')} onReg={id=>{if(registered.includes(id)){setRegistered(r=>r.filter(x=>x!==id));showToast('Registration cancelled');}else{setRegistered(r=>[...r,id]);addNotif('Registered for '+(events.find(e=>e.id===id)?.title||'event'));showToast('Registered! ✓');}}} onWish={id=>{if(wishlist.includes(id)){setWishlist(w=>w.filter(x=>x!==id));showToast('Removed from wishlist');}else{setWishlist(w=>[...w,id]);showToast('Added to wishlist ★');}}}/>}
+        {sec==='teammates'    && <TeammatesSection  st={st} onFR={id=>{if(requests.some(r=>r.to===id&&r.type==='friend'))return;const u=teammates.find(t=>t.id===id);setRequests(r=>[...r,{to:id,type:'friend',name:u?.name}]);addNotif('Friend request sent to '+(u?.name||'user'));showToast('Friend request sent!');}} onJR={id=>{if(requests.some(r=>r.to===id&&r.type==='join'))return;const u=teammates.find(t=>t.id===id);setRequests(r=>[...r,{to:id,type:'join',name:u?.name}]);addNotif('Join request sent to '+(u?.name||'user'));showToast('Join request sent!');}} onAG={id=>{if(!groups.length){showToast('Create a group first');return;}setGpFor(id);}}/>}
+        {sec==='groups'       && <GroupsSection     st={st} onCreate={()=>setShowCG(true)} onDel={i=>{setGroups(g=>g.filter((_,j)=>j!==i));showToast('Group deleted');}} onView={i=>setShowGD(i)}/>}
+        {sec==='friends'      && <FriendsSection    st={st} onAcc={id=>{setFriends(f=>[...f,id]);setRequests(r=>r.filter(x=>!(x.to===id&&x.type==='friend')));const u=teammates.find(t=>t.id===id);addNotif('You are now friends with '+(u?.name||'user'));showToast('Friend added! 🎉');}} onDec={id=>{setRequests(r=>r.filter(x=>!(x.to===id&&x.type==='friend')));showToast('Request declined');}} onRem={id=>{setFriends(f=>f.filter(x=>x!==id));showToast('Friend removed');}}/>}
+        {sec==='profile'      && <ProfileSection    st={st} onSave={upd=>{setUser(u=>({...u,...upd}));const users=JSON.parse(localStorage.getItem('cc_users')||'{}');users[userKey]={...users[userKey],...upd};localStorage.setItem('cc_users',JSON.stringify(users));showToast('Profile saved! ✓');}}/>}
+      </main>
+
+      {showCG && <Modal onClose={()=>setShowCG(false)}>
+        <h3>➕ New Group</h3>
+        <div><div className="lbl">Group Name</div><input className="inp" value={grpName} onChange={e=>setGrpName(e.target.value)} placeholder="e.g. Team Phoenix"/></div>
+        <div><div className="lbl">Description</div><input className="inp" value={grpDesc} onChange={e=>setGrpDesc(e.target.value)} placeholder="What's this group for?"/></div>
+        <div className="modal-actions">
+          <button className="btn btn-p" onClick={()=>{if(!grpName.trim()){showToast('Enter a group name');return;}setGroups(g=>[...g,{name:grpName.trim(),desc:grpDesc.trim(),members:[user.fullName||user.name||userKey]}]);addNotif('Group "'+grpName.trim()+'" created');showToast('Group created!');setGrpName('');setGrpDesc('');setShowCG(false);}}>Create</button>
+          <button className="btn btn-g" onClick={()=>setShowCG(false)}>Cancel</button>
+        </div>
+      </Modal>}
+
+      {showGD!==null && groups[showGD] && <Modal onClose={()=>setShowGD(null)}>
+        <h3>👥 {groups[showGD].name}</h3>
+        <p className="txt-m">{groups[showGD].desc||'No description'}</p>
+        <div><div className="lbl">Members</div><div className="member-chips">{groups[showGD].members.map((m,i)=><span key={i} className="chip">{m}</span>)}</div></div>
+        <div className="modal-actions"><button className="btn btn-g" onClick={()=>setShowGD(null)}>Close</button></div>
+      </Modal>}
+
+      {gpFor!==null && <GroupPickerModal groups={groups} target={teammates.find(t=>t.id===gpFor)}
+        onPick={idx=>{const u=teammates.find(t=>t.id===gpFor);if(!u){setGpFor(null);return;}if(groups[idx].members.includes(u.name)){showToast(u.name+' is already in this group');}else{setGroups(g=>g.map((grp,i)=>i===idx?{...grp,members:[...grp.members,u.name]}:grp));addNotif(u.name+' added to group "'+groups[idx].name+'"');showToast(u.name+' added!');}setGpFor(null);}}
+        onClose={()=>setGpFor(null)}/>}
+
+      {showNotif && <NotifPopup notifs={notifs} onClose={()=>setShowNotif(false)}/>}
+      <Toast msg={toast}/>
+    </div>
+  );
+};
+
+/* ══════════════════════════════════════════
+   ADMIN APP
+══════════════════════════════════════════ */
+const AdminApp = ({ onLogout }) => {
+  const [page, setPage] = useState('dashboard');
+  const getEvents = () => JSON.parse(localStorage.getItem('cc_events')||JSON.stringify(MOCK_EVENTS));
+  const [events, setEvents] = useState(getEvents);
+  const [toast, setToast] = useState('');
+  const tRef = useRef(null);
+  const [form, setForm] = useState({ name:'', date:'', category:'Tech', organizer:'', desc:'', participants:'' });
+  const [ok, setOk] = useState('');
+
+  const showToast = msg => { setToast(msg); clearTimeout(tRef.current); tRef.current=setTimeout(()=>setToast(''),2500); };
+  const upd = k => e => setForm({...form,[k]:e.target.value});
+
+  const saveEvents = evs => { localStorage.setItem('cc_events',JSON.stringify(evs)); setEvents(evs); };
+
+  const createEvent = () => {
+    if (!form.name||!form.date||!form.organizer) { showToast('Fill all required fields'); return; }
+    const newEv = { id:Date.now(), title:form.name, category:form.category, date:form.date,
+      desc:form.desc, organizer:form.organizer, participants:parseInt(form.participants)||0 };
+    saveEvents([...events, newEv]);
+    setOk('Event "'+form.name+'" created successfully!');
+    setForm({name:'',date:'',category:'Tech',organizer:'',desc:'',participants:''});
+    setTimeout(()=>{setOk('');setPage('events');},1500);
+  };
+
+  const deleteEvent = id => { saveEvents(events.filter(e=>e.id!==id)); showToast('Event deleted'); };
+
+  const ADMIN_NAV = [
+    {id:'dashboard',label:'📊 Dashboard'},
+    {id:'events',   label:'📅 All Events'},
+    {id:'create',   label:'➕ Create Event'},
+  ];
+
+  const totalParts = events.reduce((a,e)=>a+(e.participants||0),0);
+
+  return (
+    <div className="admin-layout">
+      <nav className="admin-nav">
+        <div className="admin-nav-logo">
+          <div className="logo-box">🏆</div>
+          <span className="logo-text">CampusConnect</span>
+          <span className="admin-badge">ADMIN</span>
+        </div>
+        <div className="admin-nav-links">
+          {ADMIN_NAV.map(n => (
+            <button key={n.id} className={`anl${page===n.id?' active':''}`} onClick={()=>setPage(n.id)}>{n.label}</button>
+          ))}
+        </div>
+        <button className="btn btn-d btn-sm" onClick={onLogout}>Logout</button>
+      </nav>
+
+      <div className="admin-main">
+
+        {/* DASHBOARD */}
+        {page==='dashboard' && <div style={{animation:'fadeUp .25s ease'}}>
+          <div style={{marginBottom:24}}>
+            <h2 style={{fontSize:22,fontWeight:800}}>Dashboard</h2>
+            <p className="txt-m">Overview of campus activity</p>
+          </div>
+          <div className="admin-stats">
+            {[
+              {icon:'📅', num:events.length,       label:'Total Events',   color:'var(--p)'},
+              {icon:'👥', num:totalParts,            label:'Total Participants', color:'var(--acc)'},
+              {icon:'🏆', num:events.filter(e=>e.category==='Tech').length,    label:'Tech Events',   color:'var(--s)'},
+              {icon:'🎭', num:events.filter(e=>e.category==='Cultural').length, label:'Cultural Events', color:'#b06af0'},
+            ].map((s,i) => (
+              <div key={i} className="astat">
+                <div className="astat-icon">{s.icon}</div>
+                <div className="astat-num" style={{color:s.color}}>{s.num}</div>
+                <div className="astat-label">{s.label}</div>
+              </div>
+            ))}
+          </div>
+          <div className="admin-table-wrap">
+            <div className="admin-table-hd">
+              <h3>Recent Events</h3>
+              <button className="btn btn-p btn-sm" onClick={()=>setPage('create')}>+ Add Event</button>
+            </div>
+            <table>
+              <thead><tr><th>Event</th><th>Category</th><th>Date</th><th>Organizer</th><th>Participants</th></tr></thead>
+              <tbody>
+                {events.slice(0,5).map(e => (
+                  <tr key={e.id}>
+                    <td style={{fontWeight:600}}>{e.title}</td>
+                    <td><Tag cat={e.category}/></td>
+                    <td style={{fontFamily:'var(--mono)',fontSize:12}}>{e.date}</td>
+                    <td className="txt-m">{e.organizer}</td>
+                    <td style={{fontFamily:'var(--mono)',fontSize:12}}>👥 {e.participants||0}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>}
+
+        {/* ALL EVENTS */}
+        {page==='events' && <div style={{animation:'fadeUp .25s ease'}}>
+          <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:22,flexWrap:'wrap',gap:12}}>
+            <div><h2 style={{fontSize:22,fontWeight:800}}>All Events</h2><p className="txt-m">Manage intra-college events</p></div>
+            <button className="btn btn-p" onClick={()=>setPage('create')}>+ Create Event</button>
+          </div>
+          <div className="admin-table-wrap">
+            <table>
+              <thead><tr><th>#</th><th>Event</th><th>Category</th><th>Date</th><th>Organizer</th><th>Participants</th><th>Actions</th></tr></thead>
+              <tbody>
+                {events.map((e,i) => (
+                  <tr key={e.id}>
+                    <td style={{color:'var(--txd)',fontFamily:'var(--mono)',fontSize:12}}>{i+1}</td>
+                    <td style={{fontWeight:600}}>{e.title}</td>
+                    <td><Tag cat={e.category}/></td>
+                    <td style={{fontFamily:'var(--mono)',fontSize:12}}>{e.date}</td>
+                    <td className="txt-m">{e.organizer}</td>
+                    <td style={{fontFamily:'var(--mono)',fontSize:12}}>{e.participants||0}</td>
+                    <td><div className="td-actions"><button className="btn btn-d btn-xs" onClick={()=>deleteEvent(e.id)}>Delete</button></div></td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>}
+
+        {/* CREATE EVENT */}
+        {page==='create' && <div style={{animation:'fadeUp .25s ease'}}>
+          <div style={{marginBottom:24}}>
+            <h2 style={{fontSize:22,fontWeight:800}}>Create Intra-College Event</h2>
+            <p className="txt-m">Add a new event for students to discover and register</p>
+          </div>
+          <div className="admin-form-card">
+            <div className="admin-form">
+              <div className="form-row">
+                <div className="form-field"><label className="lbl">📌 Event Name *</label><input className="inp" value={form.name} onChange={upd('name')} placeholder="HackFest 2026"/></div>
+                <div className="form-field"><label className="lbl">📅 Event Date *</label><input className="inp" type="date" value={form.date} onChange={upd('date')}/></div>
+              </div>
+              <div className="form-row">
+                <div className="form-field">
+                  <label className="lbl">🏷️ Category</label>
+                  <select className="inp" value={form.category} onChange={upd('category')}>
+                    {['Tech','Cultural','Sports','Workshop','Hackathon','Technical','Competition'].map(c=><option key={c}>{c}</option>)}
+                  </select>
+                </div>
+                <div className="form-field"><label className="lbl">🏫 Organizer *</label><input className="inp" value={form.organizer} onChange={upd('organizer')} placeholder="CS Club, IEEE, etc."/></div>
+              </div>
+              <div className="form-field">
+                <label className="lbl">📝 Description</label>
+                <textarea className="inp" value={form.desc} onChange={upd('desc')} placeholder="Brief description of the event…" rows={3} style={{resize:'vertical'}}/>
+              </div>
+              <div className="form-field">
+                <label className="lbl">👥 Expected Participants</label>
+                <input className="inp" type="number" value={form.participants} onChange={upd('participants')} placeholder="100" min="0" style={{maxWidth:200}}/>
+              </div>
+              {ok && <div className="ok-box">{ok}</div>}
+              <div style={{display:'flex',gap:10}}>
+                <button className="btn btn-p" onClick={createEvent}>✅ Create Event</button>
+                <button className="btn btn-g" onClick={()=>setPage('dashboard')}>Cancel</button>
+              </div>
+            </div>
+          </div>
+        </div>}
+      </div>
+      <Toast msg={toast}/>
+    </div>
+  );
+};
+
+/* ══════════════════════════════════════════
+   ROOT APP
+══════════════════════════════════════════ */
+const App = () => {
+  const [view, setView]     = useState('landing');
+  const [userKey, setUserKey] = useState(null);
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    const saved = localStorage.getItem('cc_session');
+    if (saved) {
+      const s = JSON.parse(saved);
+      setUserKey(s.key); setIsAdmin(s.admin);
+      setView(s.admin ? 'admin' : 'user');
+    }
+  }, []);
+
+  const handleLogin = (key, admin) => {
+    localStorage.setItem('cc_session', JSON.stringify({key, admin}));
+    setUserKey(key); setIsAdmin(admin);
+    setView(admin ? 'admin' : 'user');
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('cc_session');
+    setUserKey(null); setIsAdmin(false); setView('landing');
+  };
+
+  if (view==='landing')     return <LandingPage onNavigate={setView}/>;
+  if (view==='signup')      return <SignupPage  onNavigate={setView}/>;
+  if (view==='login')       return <LoginPage   onLogin={handleLogin} onNavigate={setView}/>;
+  if (view==='admin-login') return <LoginPage onLogin={handleLogin} onNavigate={setView} adminMode={true}/>;
+  if (view==='admin')       return <AdminApp onLogout={handleLogout}/>;
+  if (view==='user')        return <UserApp  userKey={userKey} onLogout={handleLogout}/>;
+  return <LandingPage onNavigate={setView}/>;
+};
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>

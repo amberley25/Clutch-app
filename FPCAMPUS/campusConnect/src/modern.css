@@ -1,0 +1,1067 @@
+/* =========================
+   BASE THEME
+========================= */
+
+body {
+  background: #0f172a;
+  color: #e2e8f0;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+p, span, h1, h2, h3, h4, h5, h6, label {
+  color: inherit;
+}
+
+/* =========================
+   RESET
+========================= */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+a {
+  color: #93c5fd;
+  text-decoration: none;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  color: inherit;
+}
+
+input, select, textarea {
+  outline: none;
+  background: #0f172a;
+  color: #e2e8f0;
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+input::placeholder {
+  color: #94a3b8;
+}
+
+/* focus */
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: #f97316;
+  box-shadow: 0 0 0 2px rgba(249,115,22,0.2);
+}
+
+
+/* =========================
+   CARD SYSTEM (UNIFIED)
+========================= */
+
+.event-card,
+.user-card,
+.profile-card,
+.group-card,
+.fr-item,
+.prof-card,
+.notif-pop {
+  background: #1e293b;
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 14px;
+}
+
+/* hover */
+.event-card:hover,
+.user-card:hover,
+.profile-card:hover,
+.group-card:hover {
+  transform: translateY(-4px);
+  border-color: #fafafa;
+  transition: 0.2s ease;
+}
+
+/* =========================
+   GRID SYSTEM
+========================= */
+
+.events-grid,
+.users-grid,
+.groups-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+}
+
+/* profile fixed 4 columns */
+.profile-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+@media (max-width: 1100px) {
+  .profile-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .profile-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* =========================
+   HEADERS
+========================= */
+
+.section-header h2 {
+  font-size: 1.8rem;
+  font-weight: 800;
+}
+
+.section-header p {
+  color: #94a3b8;
+}
+
+/* =========================
+   BUTTON SYSTEM (ONLY ONCE)
+========================= */
+
+.btn-save,
+.btn-create-group,
+.btn-primary {
+  background: linear-gradient(135deg, #f97316, #fb923c);
+  color: white;
+
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 0.9rem;
+
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  box-shadow: 0 6px 18px rgba(249, 115, 22, 0.25);
+  transition: 0.2s ease;
+}
+
+.btn-save:hover,
+.btn-create-group:hover,
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(249, 115, 22, 0.35);
+}
+
+.btn-delete {
+  background: transparent;
+  border: 1px solid #ef4444;
+  color: #ef4444;
+  padding: 8px 12px;
+  border-radius: 10px;
+}
+
+/* disabled */
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* =========================
+   USER CARD
+========================= */
+
+.user-card {
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.user-card h4 {
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.user-card p {
+  font-size: 0.85rem;
+  color: #94a3b8;
+}
+
+/* actions */
+.user-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.user-actions button {
+  padding: 6px 10px;
+  border-radius: 10px;
+  font-size: 0.8rem;
+}
+
+.user-actions button:first-child {
+  background: #f97316;
+  color: white;
+}
+
+.user-actions button:last-child {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.2);
+}
+
+/* =========================
+   PROFILE SYSTEM
+========================= */
+
+.profile-page {
+  padding: 24px;
+}
+
+.profile-header-card {
+  display: flex;
+  justify-content: space-between;
+  padding: 18px;
+  border-radius: 14px;
+  background: #1e293b;
+  border: 1px solid rgba(255,255,255,0.06);
+}
+
+.profile-user {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.profile-avatar {
+  width: 70px;
+  height: 70px;
+  border-radius: 14px;
+  background: #0f172a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+}
+
+.profile-name {
+  font-weight: 800;
+}
+
+.profile-email {
+  font-size: 0.85rem;
+  color: #94a3b8;
+}
+
+/* =========================
+   SKILLS
+========================= */
+
+.skill-chip {
+  background: #0f172a;
+  border: 1px solid rgba(255,255,255,0.08);
+  padding: 6px 10px;
+  border-radius: 999px;
+  display: inline-flex;
+  gap: 6px;
+  margin: 4px;
+}
+
+.skill-chip button {
+  background: none;
+  color: #ef4444;
+}
+
+/* =========================
+   GROUPS
+========================= */
+
+.groups-page {
+  padding: 24px;
+}
+
+.group-card {
+  padding: 16px;
+}
+
+.group-card .event-name {
+  font-weight: 700;
+}
+
+.group-card .event-description {
+  font-size: 0.85rem;
+  color: #94a3b8;
+}
+
+/* =========================
+   MODAL
+========================= */
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-card {
+  width: 320px;
+  background: #1e293b;
+  border-radius: 14px;
+  padding: 16px;
+}
+
+.modal-card input {
+  width: 100%;
+  margin-bottom: 10px;
+  padding: 10px;
+  border-radius: 10px;
+}
+
+/* =========================
+   NOTIFICATIONS
+========================= */
+
+.notif-pop {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 300px;
+}
+
+/* =========================
+   INTER COLLEGE
+========================= */
+
+.inter-college-card {
+  padding: 24px;
+  text-align: center;
+}html, body, #root {
+  height: 100%;
+  overflow-x: hidden;
+}
+
+body {
+  overflow-y: auto;
+}
+.page-container {
+  min-height: 100vh;
+  overflow-y: auto;
+}
+
+
+
+/* =========================
+   COMPACT EVENT FORM (FIX)
+========================= */
+
+.create-event-container {
+  padding: 24px;
+}
+
+.page-title {
+  font-size: 1.8rem;
+  font-weight: 800;
+  margin-bottom: 16px;
+}
+
+/* TWO COLUMN LAYOUT */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 20px;
+}
+
+/* FORM SECTION */
+.form-section {
+  background: #1e293b;
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 14px;
+  padding: 14px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* TITLE */
+.section-title {
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 6px;
+  color: #f97316;
+}
+
+/* LABEL COMPACT */
+.form-label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.85rem;
+}
+
+/* INPUT COMPACT */
+.form-input,
+.form-textarea {
+  padding: 8px;
+  border-radius: 10px;
+  font-size: 0.85rem;
+}
+
+/* TEXTAREA SMALLER */
+.form-textarea {
+  min-height: 70px;
+  resize: none;
+}
+
+/* ACTIONS FIXED */
+.form-actions {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+/* MOBILE */
+@media (max-width: 900px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+/* =========================
+   PROFILE PAGE WRAPPER
+========================= */
+
+.profile-page {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* =========================
+   HEADER CARD
+========================= */
+
+.profile-header-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px;
+  border-radius: 14px;
+  background: #1e293b;
+  border: 1px solid rgba(255,255,255,0.06);
+  transition: 0.2s ease;
+}
+
+.profile-header-card:hover {
+  transform: translateY(-3px);
+  border-color: #6366f1;
+}
+
+/* USER INFO */
+.profile-user {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.profile-avatar {
+  width: 70px;
+  height: 70px;
+  border-radius: 14px;
+  background: #0f172a;
+  border: 1px solid rgba(255,255,255,0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+  transition: 0.2s ease;
+}
+
+.profile-avatar:hover {
+  transform: scale(1.05);
+  border-color: #6366f1;
+}
+
+.profile-name {
+  font-size: 1.2rem;
+  font-weight: 800;
+}
+
+.profile-email {
+  font-size: 0.85rem;
+  color: #94a3b8;
+}
+
+/* =========================
+   ACTION BUTTONS
+========================= */
+
+.profile-actions-top {
+  display: flex;
+  gap: 10px;
+}
+
+.btn-save {
+  background: #6366f1;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 10px;
+  font-weight: 600;
+}
+
+.btn-delete {
+  background: transparent;
+  border: 1px solid #ef4444;
+  color: #ef4444;
+  padding: 8px 12px;
+  border-radius: 10px;
+}
+
+/* =========================
+   FLASH CARDS GRID (IMPORTANT)
+   1 2 3 4 LAYOUT FIX
+========================= */
+
+.profile-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+/* RESPONSIVE */
+@media (max-width: 1100px) {
+  .profile-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .profile-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* =========================
+   PROFILE CARDS (FLASH BOXES)
+========================= */
+
+.profile-card {
+  background: #1e293b;
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 14px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: 0.2s ease;
+}
+
+.profile-card:hover {
+  transform: translateY(-4px);
+  border-color: #6366f1;
+}
+
+/* TITLE */
+.profile-card h3 {
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+/* INPUTS */
+.profile-card input,
+.profile-card select {
+  background: #0f172a;
+  border: 1px solid rgba(255,255,255,0.08);
+  color: #e2e8f0;
+  padding: 10px;
+  border-radius: 10px;
+  outline: none;
+  font-size: 0.9rem;
+}
+
+.profile-card input:focus {
+  border-color: #6366f1;
+}
+
+/* TEXT */
+.profile-card p {
+  font-size: 0.9rem;
+  color: #94a3b8;
+}
+
+/* =========================
+   SKILLS CHIPS
+========================= */
+
+.skill-chip {
+  background: #0f172a;
+  border: 1px solid rgba(255,255,255,0.08);
+  padding: 6px 10px;
+  border-radius: 999px;
+  display: inline-flex;
+  gap: 6px;
+  margin: 4px;
+}
+
+.skill-chip button {
+  background: none;
+  border: none;
+  color: #ef4444;
+}
+
+/* =========================
+   ACHIEVEMENTS
+========================= */
+
+.achievement-item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px;
+  border-radius: 12px;
+  background: #0f172a;
+  border: 1px solid rgba(255,255,255,0.06);
+}
+
+.achievement-item button {
+  align-self: flex-end;
+  background: transparent;
+  color: #ef4444;
+  border: none;
+}
+
+/* =========================
+   OPTIONAL CLEAN BUTTON STYLE
+========================= */
+
+button {
+  cursor: pointer;
+}
+
+/* =========================
+   TYPOGRAPHY SYSTEM (FIXED)
+========================= */
+
+body {
+  font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* HEADINGS */
+h1, h2, h3 {
+  color: #f8fafc;
+  letter-spacing: 0.2px;
+}
+
+/* PRIMARY TEXT */
+p, span, label {
+  color: #e2e8f0;
+}
+
+/* MUTED TEXT */
+.muted,
+.profile-email,
+.profile-card p {
+  color: #94a3b8;
+}
+
+/* STRONG TEXT */
+.profile-name,
+.profile-card h3 {
+  color: #f8fafc;
+  font-weight: 700;
+}
+
+/* SMALL TEXT */
+small {
+  color: #64748b;
+  font-size: 0.75rem;
+}
+
+/* =========================
+   UNIFIED CARD TYPOGRAPHY SYSTEM
+========================= */
+
+/* TITLE (same everywhere: profile, friends, events) */
+.card-title,
+.profile-card h3,
+.user-card h4,
+.event-name {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #f8fafc;
+}
+
+/* NORMAL TEXT */
+.card-text,
+.profile-card p,
+.user-card p,
+.event-description {
+  font-size: 0.9rem;
+  color: #94a3b8;
+  line-height: 1.4;
+}
+
+/* SMALL META TEXT */
+.card-meta,
+.event-date,
+.notif-time,
+.profile-email {
+  font-size: 0.75rem;
+  color: #64748b;
+}
+
+/* =========================
+   LIGHT MODE THEME OVERRIDES
+   Ensures uniform visibility in light mode
+========================= */
+
+body[data-theme="light"] {
+  background: linear-gradient(180deg, #fbfbfd 0%, #f3f7fa 50%, #eef6fb 100%);
+  color: #1A1A2E;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+body[data-theme="light"] p,
+body[data-theme="light"] span,
+body[data-theme="light"] h1,
+body[data-theme="light"] h2,
+body[data-theme="light"] h3,
+body[data-theme="light"] h4,
+body[data-theme="light"] h5,
+body[data-theme="light"] h6,
+body[data-theme="light"] label {
+  color: #1A1A2E;
+}
+
+/* Light mode links */
+body[data-theme="light"] a {
+  color: #FF6B35;
+}
+
+/* Light mode inputs */
+body[data-theme="light"] input,
+body[data-theme="light"] select,
+body[data-theme="light"] textarea {
+  background: #FFFFFF;
+  color: #1A1A2E;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+body[data-theme="light"] input::placeholder {
+  color: #718096;
+}
+
+body[data-theme="light"] input:focus,
+body[data-theme="light"] select:focus,
+body[data-theme="light"] textarea:focus {
+  border-color: #FF6B35;
+  box-shadow: 0 0 0 2px rgba(255, 107, 53, 0.15);
+}
+
+/* Light mode cards */
+body[data-theme="light"] .event-card,
+body[data-theme="light"] .user-card,
+body[data-theme="light"] .profile-card,
+body[data-theme="light"] .group-card,
+body[data-theme="light"] .fr-item,
+body[data-theme="light"] .prof-card,
+body[data-theme="light"] .notif-pop {
+  background: #FFFFFF;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+body[data-theme="light"] .event-card:hover,
+body[data-theme="light"] .user-card:hover,
+body[data-theme="light"] .profile-card:hover,
+body[data-theme="light"] .group-card:hover {
+  border-color: rgba(255, 107, 53, 0.2);
+  box-shadow: 0 4px 12px rgba(255, 107, 53, 0.08);
+}
+
+/* Light mode section headers */
+body[data-theme="light"] .section-header h2 {
+  color: #1A1A2E;
+}
+
+body[data-theme="light"] .section-header p {
+  color: #4A5568;
+}
+
+/* Light mode user cards */
+body[data-theme="light"] .user-card h4 {
+  color: #1A1A2E;
+}
+
+body[data-theme="light"] .user-card p {
+  color: #4A5568;
+}
+
+body[data-theme="light"] .user-actions button:last-child {
+  border: 1px solid rgba(255, 107, 53, 0.3);
+  color: #FF6B35;
+}
+
+/* Light mode profile system */
+body[data-theme="light"] .profile-header-card {
+  background: #FFFFFF;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+body[data-theme="light"] .profile-header-card:hover {
+  border-color: rgba(255, 107, 53, 0.2);
+}
+
+body[data-theme="light"] .profile-avatar {
+  background: #F5F7FA;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+body[data-theme="light"] .profile-name {
+  color: #1A1A2E;
+}
+
+body[data-theme="light"] .profile-email {
+  color: #718096;
+}
+
+/* Light mode skills chips */
+body[data-theme="light"] .skill-chip {
+  background: #F5F7FA;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  color: #1A1A2E;
+}
+
+/* Light mode modal */
+body[data-theme="light"] .modal-card {
+  background: #FFFFFF;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+body[data-theme="light"] .modal-card input {
+  background: #F5F7FA;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  color: #1A1A2E;
+}
+
+/* Light mode form section */
+body[data-theme="light"] .form-section {
+  background: #FFFFFF;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+body[data-theme="light"] .section-title {
+  color: #FF6B35;
+}
+
+body[data-theme="light"] .form-label {
+  color: #1A1A2E;
+}
+
+body[data-theme="light"] .form-input,
+body[data-theme="light"] .form-textarea {
+  background: #F5F7FA;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  color: #1A1A2E;
+}
+
+/* Light mode page title */
+body[data-theme="light"] .page-title {
+  color: #1A1A2E;
+}
+
+/* Light mode profile cards */
+body[data-theme="light"] .profile-card {
+  background: #FFFFFF;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+body[data-theme="light"] .profile-card h3 {
+  color: #1A1A2E;
+}
+
+body[data-theme="light"] .profile-card input,
+body[data-theme="light"] .profile-card select {
+  background: #F5F7FA;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  color: #1A1A2E;
+}
+
+body[data-theme="light"] .profile-card p {
+  color: #718096;
+}
+
+/* Light mode achievement items */
+body[data-theme="light"] .achievement-item {
+  background: #F5F7FA;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+/* Light mode typography */
+body[data-theme="light"] h1,
+body[data-theme="light"] h2,
+body[data-theme="light"] h3 {
+  color: #1A1A2E;
+}
+
+body[data-theme="light"] .muted {
+  color: #718096;
+}
+
+body[data-theme="light"] .card-title,
+body[data-theme="light"] .profile-card h3,
+body[data-theme="light"] .user-card h4,
+body[data-theme="light"] .event-name {
+  color: #1A1A2E;
+}
+
+body[data-theme="light"] .card-text,
+body[data-theme="light"] .profile-card p,
+body[data-theme="light"] .user-card p,
+body[data-theme="light"] .event-description {
+  color: #4A5568;
+}
+
+body[data-theme="light"] .card-meta,
+body[data-theme="light"] .event-date,
+body[data-theme="light"] .notif-time {
+  color: #718096;
+}
+
+body[data-theme="light"] small {
+  color: #718096;
+}
+
+/* Light mode group cards */
+body[data-theme="light"] .group-card .event-name {
+  color: #1A1A2E;
+}
+
+body[data-theme="light"] .group-card .event-description {
+  color: #4A5568;
+}
+
+/* Light mode inter-college cards */
+body[data-theme="light"] .inter-college-card {
+  background: #FFFFFF;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+/* =========================
+   ADMIN DASHBOARD LIGHT MODE
+========================= */
+
+/* Admin dashboard main container and all text elements */
+body[data-theme="light"] {
+  --admin-bg: #F5F7FA !important;
+  --admin-card-bg: #FFFFFF !important;
+  --admin-text: #1A1A2E !important;
+  --admin-text-muted: #718096 !important;
+}
+
+/* Target all divs that could be admin page container */
+body[data-theme="light"] > div:not(.navbar) {
+  background-color: #F5F7FA !important;
+}
+
+/* Admin dashboard overall styling */
+body[data-theme="light"] h1 {
+  color: #1A1A2E !important;
+}
+
+body[data-theme="light"] .page-title,
+body[data-theme="light"] h2 {
+  color: #1A1A2E !important;
+}
+
+/* Table styling for admin */
+body[data-theme="light"] table {
+  background: #FFFFFF !important;
+  color: #1A1A2E !important;
+}
+
+body[data-theme="light"] table thead {
+  background: #F5F7FA !important;
+}
+
+body[data-theme="light"] table thead th {
+  background: #F5F7FA !important;
+  color: #1A1A2E !important;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08) !important;
+}
+
+body[data-theme="light"] table tbody tr {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08) !important;
+  background: #FFFFFF !important;
+}
+
+body[data-theme="light"] table tbody tr:nth-child(even) {
+  background: #FBFCFD !important;
+}
+
+body[data-theme="light"] table tbody td {
+  color: #1A1A2E !important;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08) !important;
+}
+
+/* Badge styling */
+body[data-theme="light"] span[style*="padding: 6px 12px;"] {
+  background: #E8ECF1 !important;
+  color: #1A1A2E !important;
+}
+
+body[data-theme="light"] span[style*="c7d2fe"] {
+  background: #E8E6F8 !important;
+  color: #4C1D95 !important;
+}
+
+body[data-theme="light"] span[style*="a5f3fc"] {
+  background: #E0F2FE !important;
+  color: #0369A1 !important;
+}
+
+/* Button styling in admin */
+body[data-theme="light"] button[style*="padding: 8px 14px;"] {
+  background: #2563EB !important;
+  color: white !important;
+}
+
+body[data-theme="light"] button[style*="background: #2563eb;"],
+body[data-theme="light"] button[style*="background: #2563EB;"],
+body[data-theme="light"] button[style*="#2563eb"] {
+  background: #2563EB !important;
+  color: white !important;
+}
+
+body[data-theme="light"] button[style*="background: #ef4444;"],
+body[data-theme="light"] button[style*="background: #ef4444"],
+body[data-theme="light"] button[style*="#ef4444"] {
+  background: #EF4444 !important;
+  color: white !important;
+}
+
+/* Visibility badges specific colors */
+body[data-theme="light"] span {
+  background-color: #F3F4F6;
+  color: #374151;
+}
+
+/* Muted text styling */
+body[data-theme="light"] div[style*="color: #999;"],
+body[data-theme="light"] .no-events {
+  color: #718096 !important;
+}
